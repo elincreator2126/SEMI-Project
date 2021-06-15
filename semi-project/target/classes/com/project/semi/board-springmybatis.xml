@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+<!-- 1.데이터소스(데이터연결con)설정 -->
+<bean id="dataSource" 
+class=
+"org.springframework.jdbc.datasource.DriverManagerDataSource" >
+	<property name="driverClassName" 
+	value="oracle.jdbc.driver.OracleDriver" />
+	<property name="url" 
+	value="jdbc:oracle:thin:@localhost:1521:xe" />
+	<property name="username" value="semi" />
+	<property name="password" value="semi" />			
+</bean>
+
+<!-- 2.SqlSessionFactoryBean : db-config.xml, 
+sql-mapping.xml
+board-mapping.xml
+member-mapping.xml
+xxx-mapping.xml
+ -->
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<property name="dataSource" ref="dataSource" />
+	<property name="configLocation" 
+	value="classpath:com/project/semi/board-config.xml" />	
+	<property name="mapperLocations"
+	value="classpath:com/project/semi/*-mapping.xml" />
+</bean>
+
+<!-- 3.SqlSessionTemplate api :  
+sqlSessionFactory 객체 생성자에 전달-->
+<bean id="sqlSession" 
+class="org.mybatis.spring.SqlSessionTemplate">
+	<constructor-arg ref="sqlSessionFactory" />
+</bean>
+
+<!-- 4.@annotation :MAIN 사용-->
+ <context:component-scan 
+base-package="com/project/semi" /> 
+
+<!-- web.xml에추가 
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring/root-context.xml,
+		classpath:springioc_mybatis/mybatis_spring.xml
+		</param-value>
+	</context-param>
+	
+	servlet-context.xml에추가
+	<context:component-scan 
+base-package="springioc_mybatis" />
+-->
+</beans>
+
